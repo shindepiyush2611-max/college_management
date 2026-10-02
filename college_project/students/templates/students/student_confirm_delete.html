@@ -1,0 +1,57 @@
+{% extends 'students/base.html' %}
+
+{% block title %}Delete Student: {{ student.name }} | EduManage{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center my-5">
+    <div class="col-md-6">
+
+        <div class="card card-custom shadow border-danger">
+
+            <div class="card-header bg-danger text-white py-3">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+                    <h5 class="mb-0 fw-bold">Confirm Delete Student</h5>
+                </div>
+            </div>
+
+            <div class="card-body p-4 text-center">
+
+                <p class="fs-5 mb-3">
+                    Are you sure you want to permanently delete the student record for:
+                </p>
+
+                <div class="p-3 bg-light rounded-3 border mb-4 text-start">
+                    <div class="fw-bold fs-5 text-dark">{{ student.name }}</div>
+                    <div class="text-muted small"><strong>Roll No:</strong> {{ student.roll_number }}</div>
+                    <div class="text-muted small"><strong>Course:</strong> {{ student.course }} ({{ student.academic_year }})</div>
+                    <div class="text-muted small"><strong>Email:</strong> {{ student.email }}</div>
+                    <div class="text-muted small"><strong>ABC ID:</strong> {{ student.abc_id }}</div>
+                </div>
+
+                <div class="alert alert-warning small text-start mb-4">
+                    <i class="bi bi-info-circle-fill me-1"></i>
+                    This action cannot be undone. All data related to this student will be removed.
+                </div>
+
+                <form method="POST" class="d-flex justify-content-center gap-3">
+                    {% csrf_token %}
+
+                    <a href="{% url 'student_list' %}" class="btn btn-secondary px-4">
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="btn btn-danger px-4 fw-bold">
+                        <i class="bi bi-trash-fill me-1"></i> Yes, Delete Student
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

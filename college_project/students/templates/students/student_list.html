@@ -1,0 +1,197 @@
+{% extends 'students/base.html' %}
+
+{% block title %}Student List | EduManage{% endblock %}
+
+{% block content %}
+
+<!-- Header Banner -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center my-4">
+    <div>
+        <h2 class="fw-bold mb-1 text-dark">
+            <i class="bi bi-mortarboard me-2 text-primary"></i>Student Management Directory
+        </h2>
+        <p class="text-muted mb-0">View, manage, edit, and search all enrolled student records.</p>
+    </div>
+    <div class="mt-3 mt-md-0">
+        <a href="{% url 'student_add' %}" class="btn btn-primary-custom shadow-sm">
+            <i class="bi bi-person-plus-fill me-2"></i>Add New Student
+        </a>
+    </div>
+</div>
+
+<!-- Stats Overview Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="stat-card bg-primary shadow-sm" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;">
+            <div class="text-white-50 small fw-bold text-uppercase">Total Students</div>
+            <div class="fs-2 fw-bold mt-1">{{ total_students }}</div>
+            <i class="bi bi-people stat-icon"></i>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card shadow-sm" style="background: linear-gradient(135deg, #10b981, #047857) !important;">
+            <div class="text-white-50 small fw-bold text-uppercase">Fees Collected</div>
+            <div class="fs-2 fw-bold mt-1">₹{{ total_fees_paid|floatformat:2 }}</div>
+            <i class="bi bi-cash-stack stat-icon"></i>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card shadow-sm" style="background: linear-gradient(135deg, #f59e0b, #b45309) !important;">
+            <div class="text-white-50 small fw-bold text-uppercase">Pending Fees</div>
+            <div class="fs-2 fw-bold mt-1">₹{{ total_pending_fees|floatformat:2 }}</div>
+            <i class="bi bi-exclamation-circle stat-icon"></i>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card shadow-sm" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9) !important;">
+            <div class="text-white-50 small fw-bold text-uppercase">Total Course Fees</div>
+            <div class="fs-2 fw-bold mt-1">₹{{ total_fees|floatformat:2 }}</div>
+            <i class="bi bi-journal-bookmark stat-icon"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Search and Filter Bar -->
+<div class="card card-custom p-3 mb-4">
+    <form method="GET" action="{% url 'student_list' %}" class="row g-2 align-items-center">
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" name="q" class="form-control bg-light border-start-0" placeholder="Search by name, roll no, email, phone, ABC ID..." value="{{ query }}">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <select name="course" class="form-select bg-light">
+                <option value="">-- All Courses --</option>
+                {% for c in distinct_courses %}
+                    {% if c %}
+                    <option value="{{ c }}" {% if course_filter == c %}selected{% endif %}>{{ c }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select name="year" class="form-select bg-light">
+                <option value="">-- All Years --</option>
+                {% for y_code, y_label in distinct_years %}
+                    <option value="{{ y_code }}" {% if year_filter == y_code %}selected{% endif %}>{{ y_label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2 d-flex gap-1">
+            <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                <i class="bi bi-funnel-fill me-1"></i>Filter
+            </button>
+            {% if query or course_filter or year_filter %}
+                <a href="{% url 'student_list' %}" class="btn btn-outline-secondary" title="Clear Filters">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<!-- Student List Table -->
+<div class="card card-custom shadow-sm overflow-hidden">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold text-dark">
+            Enrolled Students <span class="badge bg-light text-dark border ms-1">{{ students|length }}</span>
+        </h5>
+    </div>
+
+    <div class="card-body p-0">
+        {% if students %}
+        <div class="table-responsive">
+            <table class="table table-custom align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Roll No</th>
+                        <th>Student Details</th>
+                        <th>Course & Year</th>
+                        <th>Parents Details</th>
+                        <th>ABC ID</th>
+                        <th>Fees Info</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>
+                            <span class="badge bg-dark text-white font-monospace px-2 py-1">
+                                {{ student.roll_number }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-circle bg-primary-subtle text-primary fw-bold d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-size: 1.1rem;">
+                                    {{ student.name|slice:":1"|upper }}
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark">{{ student.name }}</div>
+                                    <div class="small text-muted">
+                                        <i class="bi bi-envelope me-1"></i>{{ student.email }}
+                                    </div>
+                                    <div class="small text-muted">
+                                        <i class="bi bi-telephone me-1"></i>{{ student.phone }}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-semibold text-primary">{{ student.course }}</div>
+                            <span class="badge badge-soft-info mt-1">{{ student.academic_year }}</span>
+                        </td>
+                        <td>
+                            <div class="small">
+                                <div><strong class="text-secondary">F:</strong> {{ student.father_name }}</div>
+                                <div><strong class="text-secondary">M:</strong> {{ student.mother_name }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge badge-soft-primary abc-badge border border-primary-subtle">
+                                <i class="bi bi-card-heading me-1"></i>{{ student.abc_id }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="fw-bold">₹{{ student.fees }}</div>
+                            {% if student.fee_status == 'Paid' %}
+                                <span class="badge badge-soft-success">Paid (₹{{ student.fees_paid }})</span>
+                            {% elif student.fee_status == 'Partial' %}
+                                <span class="badge badge-soft-warning">Partial (Paid ₹{{ student.fees_paid }})</span>
+                            {% else %}
+                                <span class="badge badge-soft-danger">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{% url 'student_detail' student.pk %}" class="btn btn-outline-info" title="View Full Profile">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                                <a href="{% url 'student_edit' student.pk %}" class="btn btn-outline-warning" title="Edit Student">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <a href="{% url 'student_delete' student.pk %}" class="btn btn-outline-danger" title="Delete Student">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-journal-x text-muted display-3"></i>
+            <h4 class="mt-3 fw-bold text-secondary">No Students Found</h4>
+            <p class="text-muted">No student records matching your search or filters.</p>
+            <a href="{% url 'student_add' %}" class="btn btn-primary-custom mt-2">
+                <i class="bi bi-plus-lg me-1"></i>Add Student Now
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

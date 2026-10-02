@@ -1,0 +1,161 @@
+{% extends 'students/base.html' %}
+
+{% block title %}{{ title }} | EduManage{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center my-4">
+    <div class="col-lg-9">
+
+        <!-- Header Navigation Breadcrumb -->
+        <div class="mb-3">
+            <a href="{% url 'student_list' %}" class="text-decoration-none text-muted">
+                <i class="bi bi-arrow-left me-1"></i> Back to Student Directory
+            </a>
+        </div>
+
+        <div class="card card-custom shadow">
+            <div class="card-header bg-gradient-primary text-white py-3">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-person-vcard fs-4 text-warning"></i>
+                    <h4 class="mb-0 fw-bold">{{ title }}</h4>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+
+                <form method="POST" novalidate>
+                    {% csrf_token %}
+
+                    <!-- Section 1: Academic Details -->
+                    <div class="mb-4">
+                        <h6 class="text-primary fw-bold text-uppercase border-bottom pb-2 mb-3">
+                            <i class="bi bi-mortarboard me-2"></i>1. Academic Details
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Roll Number / Enrollment No *</label>
+                                {{ form.roll_number }}
+                                {% if form.roll_number.errors %}
+                                    <div class="text-danger small mt-1">{{ form.roll_number.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Student Full Name *</label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Course / Branch *</label>
+                                {{ form.course }}
+                                {% if form.course.errors %}
+                                    <div class="text-danger small mt-1">{{ form.course.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Academic Year *</label>
+                                {{ form.academic_year }}
+                                {% if form.academic_year.errors %}
+                                    <div class="text-danger small mt-1">{{ form.academic_year.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">ABC ID (Academic Bank of Credits) *</label>
+                                {{ form.abc_id }}
+                                {% if form.abc_id.errors %}
+                                    <div class="text-danger small mt-1">{{ form.abc_id.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Contact & Family Details -->
+                    <div class="mb-4">
+                        <h6 class="text-primary fw-bold text-uppercase border-bottom pb-2 mb-3">
+                            <i class="bi bi-telephone-inbound me-2"></i>2. Contact & Family Details
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Email Address *</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Phone Number *</label>
+                                {{ form.phone }}
+                                {% if form.phone.errors %}
+                                    <div class="text-danger small mt-1">{{ form.phone.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Father's Name *</label>
+                                {{ form.father_name }}
+                                {% if form.father_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.father_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Mother's Name *</label>
+                                {{ form.mother_name }}
+                                {% if form.mother_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.mother_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Fees & Status -->
+                    <div class="mb-4">
+                        <h6 class="text-primary fw-bold text-uppercase border-bottom pb-2 mb-3">
+                            <i class="bi bi-wallet2 me-2"></i>3. Fees & Payment Status
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Total Fees (₹) *</label>
+                                {{ form.fees }}
+                                {% if form.fees.errors %}
+                                    <div class="text-danger small mt-1">{{ form.fees.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Fees Paid (₹)</label>
+                                {{ form.fees_paid }}
+                                {% if form.fees_paid.errors %}
+                                    <div class="text-danger small mt-1">{{ form.fees_paid.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Fee Status *</label>
+                                {{ form.fee_status }}
+                                {% if form.fee_status.errors %}
+                                    <div class="text-danger small mt-1">{{ form.fee_status.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Buttons -->
+                    <div class="pt-3 border-top d-flex gap-2 justify-content-end">
+                        <a href="{% url 'student_list' %}" class="btn btn-light border px-4 fw-medium">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary-custom px-4">
+                            <i class="bi bi-check-lg me-1"></i> Save Student Details
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
